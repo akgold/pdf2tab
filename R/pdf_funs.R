@@ -33,106 +33,20 @@ pdf_load <- function(filename = NULL, text = NULL,
   pdf_tab(text)
 }
 
+#' Title
+#'
+#' @param text
+#' @param n_col
+#'
+#' @return
+#' @export
+#'
+#' @examples
 pdf_tab <- function(text, n_col = NULL) {
-  list(text = lapply(text, pdf_page),
-       n_col = NULL,
-       class = "pdf")
-}
-
-#' Title
-#'
-#' @param page
-#' @param cols
-#' @param rows
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
-#'          " adsdsf           asd             asdfad"))
-pdf_page <- function(page, cols = NULL, rows = NULL) {
-  l <- list(page = page,
-       cols = cols,
-       rows = rows)
-  class(l) <- "pdf_page"
-  l
-}
-
-print.pdf_page <- function(x) {
-
-  if (!is.null(x$cols)) {
-    insert_cols(x)
-  }
-
-  if (!is.null(x$rows)) {
-    insert_rows(x)
-  }
-
-  cat(paste0(x$page, collapse = "\n"))
-}
-
-#' Title
-#'
-#' @param x
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' pdf_page(list("123456789123456789",
-#'          "123456789123456789"),
-#'          cols = c(3, 6, 15)) %>%
-#' insert_cols()
-insert_cols <- function(x) {
-  stopifnot(class(x) == "pdf_page")
-
-  # Increment later cols to account for earlier separators inserted
-  cols <- x$cols + which(x$cols == x$cols) - 1
-
-  x$page <- c(lapply(x$page, add_chars, cols = cols),
-    add_chars(paste0(rep(" ", max(cols + 1)), collapse = ""),
-              cols,
-              seq(length(cols))))
-  x
-}
-
-#' Title
-#'
-#' @param line
-#' @param cols
-#' @param char
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' add_chars("ABcdEF", c(2, 5))
-#' add_chars("ABcdEF", c(2, 5), 1:2)
-add_chars <- function(line, cols, chars = "|") {
-  if (length(cols) == 0) {
-    return(line)
-  }
-
-  if (length(chars) < length(cols)) {
-    chars <- rep(chars, length(cols))
-  }
-
-  # insert next col character
-  line <- paste0(substr(line, 1, cols[1]),
-                 chars[1],
-                 substr(line, cols[1] + 1, nchar(line)))
-
-  # recurse, removing first col to add
-  add_chars(line, cols[-1], chars[-1])
-}
-
-
-
-drop_lines <- function(pdf, drop_from_top, drop_from_bottom) {
-  purrr::map(pdf, function(page) page[-c(drop_from_top,
-                                         seq(length(page) - drop_from_bottom,
-                                             length(page)))])
+  p <- list(text = lapply(text, pdf_page),
+            n_col = NULL)
+  class(p) <- "pdf"
+  p
 }
 
 #' Title
@@ -143,9 +57,38 @@ drop_lines <- function(pdf, drop_from_top, drop_from_bottom) {
 #'
 #' @examples
 #' pdf_load(text = c("ABC\nDEF\nGHI", "abc\ndef\nghi"))
-print.pdf <- function(pdf) {
-  cat(sprintf("\n\nPDF of %s pages\n\nPage 1:\n\n",
-              length(pdf)))
-  cat(paste0(pdf[[1]], collapse = "\n"))
-  invisible(pdf)
+print.pdf <- function(x, pages = 1) {
+  cat(sprintf("\n\nPDF of %s pages.\n\n", length(x$text)))
+
+  for (i in pages) {
+    cat(sprintf("\nPAGE %s\n\n", i))
+    print(get_page(x, i))
+  }
+
+  invisible(x)
 }
+
+get_page <- function(x, i) {
+  x$text[[i]]
+}
+
+
+
+#' Title
+#'
+#' @param pdf
+#' @param drop_from_top
+#' @param drop_from_bottom
+#'
+#' @return
+#' @export
+#'
+#' @examples
+drop_lines <- function(pdf, drop_from_top, drop_from_bottom) {
+  purrr::map(pdf, function(page) page[-c(drop_from_top,
+                                         seq(length(page) - drop_from_bottom,
+                                             length(page)))])
+}
+
+
+
