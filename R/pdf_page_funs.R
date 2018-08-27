@@ -17,7 +17,7 @@
 #' pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
 #'          " adsdsf           asd             asdfad")) %>%
 #'          str()
-pdf_page <- function(text, cols = NULL, rows = NULL) {
+pdf_page <- function(text, rows = NULL, cols = NULL) {
   l <- list(text = text,
             cols = cols,
             rows = rows)
@@ -37,12 +37,16 @@ get_page_rows <- function(x) {
   get_page_attr(x, "rows")
 }
 
-set_page_cols <- function(x) {
-  set_page_attr(x, "cols")
+set_page_cols <- function(x, val) {
+  set_page_attr(x, "cols", val)
 }
 
-set_page_rows <- function(x) {
-  set_page_attr(x, "rows")
+set_page_rows <- function(x, val) {
+  set_page_attr(x, "rows", val)
+}
+
+set_page_text <- function(x, val) {
+  set_page_attr(x, "text", val)
 }
 
 get_page_attr <- function(x, which) {
@@ -113,15 +117,13 @@ add_print_cols <- function(x, cols) {
 #' @export
 #'
 #' @examples
-#' add_print_rows(list("AB|CD|EF", "AB|CD|EF", "AB|CD|EF", "12|34|56"),
-#' rows = c(3, 4), cols = c(2, 4))
-add_print_rows <- function(x, rows, cols) {
+#' add_rows(list("AB|CD|EF", "AB|CD|EF", "AB|CD|EF", "12|34|56"),
+#' rows = c(3, 4))
+add_rows <- function(x, rows, cols) {
   if (is.null(rows)) return(x)
 
-  row_len <- purrr::map_int(x, nchar) %>%
-    max()
-
-  add_rows_recur(x, rows, make_row(cols, row_len))
+  add_rows_recur(x, rows,
+                 make_row(cols, row_len = purrr::map_int(x, nchar) %>% max()))
 }
 
 #' Title
@@ -136,6 +138,7 @@ add_print_rows <- function(x, rows, cols) {
 #' make_row(c(2, 4), 6)
 make_row <- function(cols, row_len) {
   r <- rep("-", row_len)
+
   if (!is.null(cols)) {
     cols <- cols + which(cols == cols)
     r[cols] <- "+"
@@ -143,6 +146,18 @@ make_row <- function(cols, row_len) {
   paste0(r, collapse = "")
 }
 
+#' Title
+#'
+#' @param x
+#' @param rows
+#' @param new_row
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' add_rows_recur(list("ABC", "ABC"), NULL, "")
+#' add_rows_recur(list("ABC", "ABC"), 1, "---")
 add_rows_recur <- function(x, rows, new_row) {
   if (length(rows) == 0) return(x)
 

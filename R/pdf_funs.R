@@ -23,14 +23,45 @@ pdf_load <- function(filename = NULL, text = NULL,
   if (!is.null(filename)) text <- pdftools::pdf_text(filename, ...)
 
   if (is.null(pages)) {
-    pages <- seq(length(l))
+    pages <- seq(length(text))
   }
 
-  text <- lapply(text, function(x) strsplit(x, "\n")[[1]]) %>%
+  # split text and newline, drop extra lines and keep only needed pages
+  p <- pdf(text) %>%
+    split_text() %>%
     drop_lines(drop_from_top, drop_from_bottom) %>%
-    `[`(pages)
+    keep_pages(pages)
 
-  pdf_tab(text)
+  pdf(text)
+}
+
+#' Title
+#'
+#' @param pdf
+#' @param by_char
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' pdf(c("ABC\nDEF\nGHI", "abc\ndef\nghi")) %>% split_text()
+split_text <- function(pdf, by_char = "\n") {
+  stopifnot(class(pdf) == "pdf")
+  stringr::str_split(get_pdf_text(pdf) %>% unlist(), by_char) %>%
+    lapply()
+}
+
+set_pdf_text <- function(pdf, text) {
+  pdf$text <- text
+  pdf
+}
+
+get_pdf_text <- function(pdf) {
+  lapply(pdf$pages, get_page_text)
+}
+
+get_n_col <- function(pdf) {
+  pdf$n_col
 }
 
 #' Title
@@ -42,8 +73,9 @@ pdf_load <- function(filename = NULL, text = NULL,
 #' @export
 #'
 #' @examples
-pdf_tab <- function(text, n_col = NULL) {
-  p <- list(text = lapply(text, pdf_page),
+#' pdf(c("ABC\nDEF\nGHI", "abc\ndef\nghi"))
+pdf <- function(text, n_col = NULL) {
+  p <- list(pages = lapply(text, pdf_page),
             n_col = NULL)
   class(p) <- "pdf"
   p
