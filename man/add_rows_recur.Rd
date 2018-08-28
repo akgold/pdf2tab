@@ -15,11 +15,10 @@ add_rows_recur(x, rows, new_row)
 }
 \value{
 x with new row added after rows
+
+pdf2tab:::add_rows_recur(list("ABC", "ABC"), NULL, "")
+pdf2tab:::add_rows_recur(list("ABC", "ABC"), 1, "---")
 }
 \description{
 Recursively add Rows
-}
-\examples{
-add_rows_recur(list("ABC", "ABC"), NULL, "")
-add_rows_recur(list("ABC", "ABC"), 1, "---")
 }

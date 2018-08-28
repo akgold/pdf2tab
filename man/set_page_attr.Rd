@@ -15,11 +15,10 @@ set_page_attr(x, which, val)
 }
 \value{
 attribute of x
+
+p <- pdf2tab:::pdf_page("ABC", 1, 2)
+pdf2tab:::set_page_attr(p, "text", "DEF")
 }
 \description{
 Set Attribute for Page
-}
-\examples{
-p <- pdf_page("ABC", 1, 2)
-set_page_attr(p, "text", "DEF")
 }

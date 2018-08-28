@@ -13,14 +13,14 @@ add_print_cols(x, cols)
 }
 \value{
 x with column break characters added
+
+t <- pdf2tab:::pdf_page(list("123456789123456789",
+         "123456789123456789"),
+         cols = c(3, 6, 15))
+pdf2tab:::add_print_cols(pdf2tab:::get_page_text(t),
+pdf2tab:::get_page_cols(t))
+pdf2tab:::add_print_cols(pdf2tab:::get_page_text(t), NULL)
 }
 \description{
 Add column breaks
-}
-\examples{
-t <- pdf_page(list("123456789123456789",
-         "123456789123456789"),
-         cols = c(3, 6, 15))
-add_print_cols(get_page_text(t), get_page_cols(t))
-add_print_cols(get_page_text(t), NULL)
 }

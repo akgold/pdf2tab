@@ -18,6 +18,6 @@ attribute of x
 Get Attribute from Page
 }
 \examples{
-p <- pdf_page("ABC", 1, 2)
-get_page_attr(p, "text")
+p <- pdf2tab:::pdf_page("ABC", 1, 2)
+pdf2tab:::get_page_attr(p, "text")
 }

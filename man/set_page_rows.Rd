@@ -13,11 +13,10 @@ set_page_rows(x, val)
 }
 \value{
 pdf_page
+
+p <- pdf2tab:::pdf_page("ABC", 1, 2)
+pdf2tab:::set_page_rows(p, 3)
 }
 \description{
 Set Rows for Page
-}
-\examples{
-p <- pdf_page("ABC", 1, 2)
-set_page_rows(p, 3)
 }

@@ -11,11 +11,10 @@ get_page_cols(x)
 }
 \value{
 numeric, columns of x
+
+p <- pdf2tab:::pdf_page("ABC", 1, 2)
+pdf2tab:::get_page_cols(p)
 }
 \description{
 Get PDF Page Columns
-}
-\examples{
-p <- pdf_page("ABC", 1, 2)
-get_page_cols(p)
 }

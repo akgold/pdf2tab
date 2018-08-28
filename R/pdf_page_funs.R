@@ -12,8 +12,7 @@
 #'
 #' @return a pdf_page object
 #'
-#' @examples
-#' str(pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
+#' str(pdf2tab:::pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
 #'          " adsdsf           asd             asdfad")))
 pdf_page <- function(text, rows = NULL, cols = NULL) {
   l <- list(text = text,
@@ -29,9 +28,8 @@ pdf_page <- function(text, rows = NULL, cols = NULL) {
 #'
 #' @return character, text of x
 #'
-#' @examples
-#' p <- pdf_page("ABC", 1, 2)
-#' get_page_text(p)
+#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
+#' pdf2tab:::get_page_text(p)
 get_page_text <- function(x) {
   get_page_attr(x, "text")
 }
@@ -42,9 +40,8 @@ get_page_text <- function(x) {
 #'
 #' @return numeric, columns of x
 #'
-#' @examples
-#' p <- pdf_page("ABC", 1, 2)
-#' get_page_cols(p)
+#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
+#' pdf2tab:::get_page_cols(p)
 get_page_cols <- function(x) {
   get_page_attr(x, "cols")
 }
@@ -55,9 +52,8 @@ get_page_cols <- function(x) {
 #'
 #' @return numeric, rows of x
 #'
-#' @examples
-#' p <- pdf_page("ABC", 1, 2)
-#' get_page_rows(p)
+#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
+#' pdf2tab:::get_page_rows(p)
 get_page_rows <- function(x) {
   get_page_attr(x, "rows")
 }
@@ -68,9 +64,8 @@ get_page_rows <- function(x) {
 #'
 #' @return pdf_page
 #'
-#' @examples
-#' p <- pdf_page("ABC", 1, 2)
-#' set_page_text(p, "DEF")
+#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
+#' pdf2tab:::set_page_text(p, "DEF")
 set_page_cols <- function(x, val) {
   set_page_attr(x, "cols", val)
 }
@@ -81,9 +76,8 @@ set_page_cols <- function(x, val) {
 #'
 #' @return pdf_page
 #'
-#' @examples
-#' p <- pdf_page("ABC", 1, 2)
-#' set_page_rows(p, 3)
+#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
+#' pdf2tab:::set_page_rows(p, 3)
 set_page_rows <- function(x, val) {
   set_page_attr(x, "rows", val)
 }
@@ -94,9 +88,8 @@ set_page_rows <- function(x, val) {
 #'
 #' @return pdf_page
 #'
-#' @examples
-#' p <- pdf_page("ABC", 1, 2)
-#' set_page_text(p, "DEF")
+#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
+#' pdf2tab:::set_page_text(p, "DEF")
 set_page_text <- function(x, val) {
   set_page_attr(x, "text", val)
 }
@@ -109,8 +102,8 @@ set_page_text <- function(x, val) {
 #' @return attribute of x
 #'
 #' @examples
-#' p <- pdf_page("ABC", 1, 2)
-#' get_page_attr(p, "text")
+#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
+#' pdf2tab:::get_page_attr(p, "text")
 get_page_attr <- function(x, which) {
   stopifnot(which %in% names(x))
   x[[which]]
@@ -124,9 +117,8 @@ get_page_attr <- function(x, which) {
 #'
 #' @return attribute of x
 #'
-#' @examples
-#' p <- pdf_page("ABC", 1, 2)
-#' set_page_attr(p, "text", "DEF")
+#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
+#' pdf2tab:::set_page_attr(p, "text", "DEF")
 set_page_attr <- function(x, which, val) {
   stopifnot(which %in% names(x))
   x[[which]] <- val
@@ -144,11 +136,10 @@ set_page_attr <- function(x, which, val) {
 #'
 #' @return x (invisibly)
 #'
-#' @examples
-#' pdf_page(list("a   b   c", "1   2   3"))
-#' pdf_page(list("ABCDEF", "123456"), cols = c(2, 4))
-#' pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"), rows = 3)
-#' pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"),
+#' pdf2tab:::pdf_page(list("a   b   c", "1   2   3"))
+#' pdf2tab:::pdf_page(list("ABCDEF", "123456"), cols = c(2, 4))
+#' pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"), rows = 3)
+#' pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"),
 #' cols = c(2, 4), rows = c(3, 4))
 print.pdf_page <- function(x, ...) {
 
@@ -168,12 +159,12 @@ print.pdf_page <- function(x, ...) {
 #'
 #' @return x with column break characters added
 #'
-#' @examples
-#' t <- pdf_page(list("123456789123456789",
+#' t <- pdf2tab:::pdf_page(list("123456789123456789",
 #'          "123456789123456789"),
 #'          cols = c(3, 6, 15))
-#' add_print_cols(get_page_text(t), get_page_cols(t))
-#' add_print_cols(get_page_text(t), NULL)
+#' pdf2tab:::add_print_cols(pdf2tab:::get_page_text(t),
+#' pdf2tab:::get_page_cols(t))
+#' pdf2tab:::add_print_cols(pdf2tab:::get_page_text(t), NULL)
 add_print_cols <- function(x, cols) {
   if (is.null(cols)) return(x)
 
@@ -191,8 +182,7 @@ add_print_cols <- function(x, cols) {
 #'
 #' @return x with row break character strings added
 #'
-#' @examples
-#' add_rows(list("AB|CD|EF", "AB|CD|EF", "AB|CD|EF", "12|34|56"),
+#' pdf2tab:::add_rows(list("AB|CD|EF", "AB|CD|EF", "AB|CD|EF", "12|34|56"),
 #' rows = c(3, 4))
 add_print_rows <- function(x, rows, cols) {
   if (is.null(rows)) return(x)
@@ -208,8 +198,7 @@ add_print_rows <- function(x, rows, cols) {
 #'
 #' @return character of length 1, filler row
 #'
-#' @examples
-#' make_row(c(2, 4), 6)
+#' pdf2tab:::make_row(c(2, 4), 6)
 make_row <- function(cols, row_len) {
   r <- rep("-", row_len)
 
@@ -228,9 +217,8 @@ make_row <- function(cols, row_len) {
 #'
 #' @return x with new row added after rows
 #'
-#' @examples
-#' add_rows_recur(list("ABC", "ABC"), NULL, "")
-#' add_rows_recur(list("ABC", "ABC"), 1, "---")
+#' pdf2tab:::add_rows_recur(list("ABC", "ABC"), NULL, "")
+#' pdf2tab:::add_rows_recur(list("ABC", "ABC"), 1, "---")
 add_rows_recur <- function(x, rows, new_row) {
   if (length(rows) == 0) return(x)
 
@@ -245,12 +233,11 @@ add_rows_recur <- function(x, rows, new_row) {
 #'
 #' @return character, col breaks added after cols
 #'
-#' @examples
-#' add_chars("ABcdEF", c(2, 4))
-#' add_chars("ABcdEF", c(2, 4), 1:2)
+#' pdf2tab:::add_chars("ABcdEF", c(2, 4))
+#' pdf2tab:::add_chars("ABcdEF", c(2, 4), 1:2)
 add_chars <- function(line, cols, chars = "|") {
   stopifnot(typeof(line) == "character" & length(line) == 1)
-  stopifnot(length(chars %in% c(1, length(cols))))
+  stopifnot(length(chars) %in% c(1, length(cols)))
 
   # split line and create col line to merge with
   line <- strsplit(line, "")[[1]]

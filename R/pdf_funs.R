@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' pdf2tab:::pdf_load(text = c("ABC\nDEF\nGHI", "abc\ndef\nghi"))
+#' #pdf_load(text = c("ABC\nDEF\nGHI", "abc\ndef\nghi"))
 pdf_load <- function(filename = NULL, text = NULL,
                      pages = NULL,
                      drop_from_top = 0, drop_from_bottom = 0,
@@ -27,10 +27,10 @@ pdf_load <- function(filename = NULL, text = NULL,
   }
 
   # split text and newline, drop extra lines and keep only needed pages
-  p <- pdf(text) %>%
-    split_text() %>%
-    drop_lines(drop_from_top, drop_from_bottom) %>%
-    keep_pages(pages)
+  p <- pdf(text)
+  p <- split_text(p)
+  p <- drop_lines(p, drop_from_top, drop_from_bottom)
+  p <- keep_pages(p, pages)
 
   pdf(text)
 }
@@ -41,14 +41,13 @@ pdf_load <- function(filename = NULL, text = NULL,
 #' @param by_char
 #'
 #' @return
-#' @export
 #'
-#' @examples
-#' pdf(c("ABC\nDEF\nGHI", "abc\ndef\nghi")) %>% split_text()
+#' split_text(pdf(c("ABC\nDEF\nGHI", "abc\ndef\nghi")))
 split_text <- function(pdf, by_char = "\n") {
   stopifnot(class(pdf) == "pdf")
-  stringr::str_split(get_pdf_text(pdf) %>% unlist(), by_char) %>%
-    lapply()
+  # TODO: Doesn't
+  # stringr::str_split(get_pdf_text(pdf) %>% unlist(), by_char)
+  pdf
 }
 
 set_pdf_text <- function(pdf, text) {
@@ -70,9 +69,7 @@ get_n_col <- function(pdf) {
 #' @param n_col
 #'
 #' @return
-#' @export
 #'
-#' @examples
 #' pdf(list("ABC\nDEF\nGHI", "abc\ndef\nghi"))
 pdf <- function(text, n_col = NULL) {
   p <- list(pages = lapply(text, pdf_page),
@@ -87,7 +84,6 @@ pdf <- function(text, n_col = NULL) {
 #'
 #' @return
 #'
-#' @examples
 #' pdf_load(text = c("ABC\nDEF\nGHI", "abc\ndef\nghi"))
 print.pdf <- function(x, pages = 1) {
   cat(sprintf("\n\nPDF of %s pages.\n\n", get_n_pages(x)))
@@ -107,9 +103,7 @@ print.pdf <- function(x, pages = 1) {
 #' @param i
 #'
 #' @return
-#' @export
 #'
-#' @examples
 #' x <- pdf(list("ABC", "DEF"))
 #' get_pages(x)
 #' get_pages(x, 1)

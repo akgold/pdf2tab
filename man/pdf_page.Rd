@@ -15,11 +15,10 @@ pdf_page(text, rows = NULL, cols = NULL)
 }
 \value{
 a pdf_page object
+
+str(pdf2tab:::pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
+         " adsdsf           asd             asdfad")))
 }
 \description{
 Create a PDF Page
-}
-\examples{
-str(pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
-         " adsdsf           asd             asdfad")))
 }

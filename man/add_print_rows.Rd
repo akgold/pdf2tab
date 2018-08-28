@@ -15,11 +15,10 @@ add_print_rows(x, rows, cols)
 }
 \value{
 x with row break character strings added
+
+pdf2tab:::add_rows(list("AB|CD|EF", "AB|CD|EF", "AB|CD|EF", "12|34|56"),
+rows = c(3, 4))
 }
 \description{
 Add Rows to Text
-}
-\examples{
-add_rows(list("AB|CD|EF", "AB|CD|EF", "AB|CD|EF", "12|34|56"),
-rows = c(3, 4))
 }

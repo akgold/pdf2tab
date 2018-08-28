@@ -13,10 +13,9 @@ make_row(cols, row_len)
 }
 \value{
 character of length 1, filler row
+
+pdf2tab:::make_row(c(2, 4), 6)
 }
 \description{
 Make filler row
-}
-\examples{
-make_row(c(2, 4), 6)
 }

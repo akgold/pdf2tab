@@ -13,11 +13,10 @@ set_page_text(x, val)
 }
 \value{
 pdf_page
+
+p <- pdf2tab:::pdf_page("ABC", 1, 2)
+pdf2tab:::set_page_text(p, "DEF")
 }
 \description{
 Set Text for Page
-}
-\examples{
-p <- pdf_page("ABC", 1, 2)
-set_page_text(p, "DEF")
 }

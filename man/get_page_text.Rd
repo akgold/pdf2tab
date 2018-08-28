@@ -11,11 +11,10 @@ get_page_text(x)
 }
 \value{
 character, text of x
+
+p <- pdf2tab:::pdf_page("ABC", 1, 2)
+pdf2tab:::get_page_text(p)
 }
 \description{
 Get Text from Page
-}
-\examples{
-p <- pdf_page("ABC", 1, 2)
-get_page_text(p)
 }

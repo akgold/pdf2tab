@@ -11,11 +11,10 @@ get_page_rows(x)
 }
 \value{
 numeric, rows of x
+
+p <- pdf2tab:::pdf_page("ABC", 1, 2)
+pdf2tab:::get_page_rows(p)
 }
 \description{
 Get PDF Page Rows
-}
-\examples{
-p <- pdf_page("ABC", 1, 2)
-get_page_rows(p)
 }
