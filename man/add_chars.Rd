@@ -15,11 +15,10 @@ add_chars(line, cols, chars = "|")
 }
 \value{
 character, col breaks added after cols
+
+pdf2tab:::add_chars("ABcdEF", c(2, 4))
+pdf2tab:::add_chars("ABcdEF", c(2, 4), 1:2)
 }
 \description{
 Add Characters After Specific Number
-}
-\examples{
-add_chars("ABcdEF", c(2, 4))
-add_chars("ABcdEF", c(2, 4), 1:2)
 }
