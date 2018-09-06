@@ -13,13 +13,14 @@
 }
 \value{
 x (invisibly)
-
+}
+\description{
+Print a PDF page
+}
+\examples{
 pdf2tab:::pdf_page(c("a   b   c", "1   2   3"))
 pdf2tab:::pdf_page(list("ABCDEF", "123456"), cols = c(2, 4))
 pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"), rows = 3)
 pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"),
 cols = c(2, 4), rows = c(3, 4))
-}
-\description{
-Print a PDF page
 }
