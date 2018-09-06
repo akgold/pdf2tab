@@ -168,10 +168,10 @@ print.pdf_page <- function(x, ...) {
 add_print_cols <- function(x, cols) {
   if (is.null(cols)) return(x)
 
-  c(purrr::map_chr(x, add_chars, cols = cols),
+  as.list(c(purrr::map_chr(x, add_chars, cols = cols),
     add_chars(paste0(rep(" ", max(cols + 1)), collapse = ""),
               cols = cols,
-              chars = seq(length(cols))))
+              chars = seq(length(cols)))))
 }
 
 #' Add Rows to Text

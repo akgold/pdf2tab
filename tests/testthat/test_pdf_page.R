@@ -28,6 +28,6 @@ test_that("Page printers work right", {
                list("ABC", "ABC"))
   expect_equal(pdf2tab:::add_print_cols(pdf2tab:::get_page_text(p), NULL),
                list("ABC", "123"))
-  # expect_equal(pdf2tab:::add_print_cols(pdf2tab:::get_page_text(p), 2),
-  #              list("AB|C", "12|3", "  1 "))
+  expect_equal(pdf2tab:::add_print_cols(pdf2tab:::get_page_text(p), 2),
+               list("AB|C", "12|3", "  1 "))
 })
