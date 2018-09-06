@@ -4,16 +4,6 @@
 # Pdf Page Constructor, Getters, Setters   #
 ############################################
 
-#' Create a PDF Page
-#'
-#' @param text Text of page
-#' @param cols numeric, characters preceding column breaks
-#' @param rows numeric, rows preceding row breaks
-#'
-#' @return a pdf_page object
-#'
-#' str(pdf2tab:::pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
-#'          " adsdsf           asd             asdfad")))
 pdf_page <- function(text, rows = NULL, cols = NULL, split_char = "\n") {
   structure(list(text = stringr::str_split(text, split_char),
                  cols = cols,
@@ -105,16 +95,6 @@ add_print_cols <- function(x, cols) {
                       chars = seq(length(cols)))))
 }
 
-#' Add Rows to Text
-#'
-#' @param x list of characters
-#' @param rows where to add row breaks
-#' @param cols column breaks
-#'
-#' @return x with row break character strings added
-#'
-#' pdf2tab:::add_rows(list("AB|CD|EF", "AB|CD|EF", "AB|CD|EF", "12|34|56"),
-#' rows = c(3, 4))
 add_print_rows <- function(x, rows, cols) {
   if (is.null(rows)) return(x)
 
@@ -122,14 +102,6 @@ add_print_rows <- function(x, rows, cols) {
                  make_row(cols, row_len = max(purrr::map_int(x, nchar))))
 }
 
-#' Make filler row
-#'
-#' @param cols location of col breaks
-#' @param row_len total length of row
-#'
-#' @return character of length 1, filler row
-#'
-#' pdf2tab:::make_row(c(2, 4), 6)
 make_row <- function(cols, row_len) {
   r <- rep("-", row_len)
 
@@ -140,32 +112,12 @@ make_row <- function(cols, row_len) {
   paste0(r, collapse = "")
 }
 
-#' Recursively add Rows
-#'
-#' @param x list of characters
-#' @param rows where to add
-#' @param new_row character, value for new row
-#'
-#' @return x with new row added after rows
-#'
-#' pdf2tab:::add_rows_recur(list("ABC", "ABC"), NULL, "")
-#' pdf2tab:::add_rows_recur(list("ABC", "ABC"), 1, "---")
 add_rows_recur <- function(x, rows, new_row) {
   if (length(rows) == 0) return(x)
 
   add_rows_recur(append(x, new_row, rows[1]), rows[-1] + 1, new_row)
 }
 
-#' Add Characters After Specific Number
-#'
-#' @param line character of length 1
-#' @param chars characters to add, length 1 or same as cols
-#' @param cols characters preceding those to add
-#'
-#' @return character, col breaks added after cols
-#'
-#' pdf2tab:::add_chars("ABcdEF", c(2, 4))
-#' pdf2tab:::add_chars("ABcdEF", c(2, 4), 1:2)
 add_chars <- function(line, cols, chars = "|") {
   stopifnot(typeof(line) == "character" & length(line) == 1)
   stopifnot(length(chars) %in% c(1, length(cols)))
