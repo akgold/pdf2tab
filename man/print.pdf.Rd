@@ -2,17 +2,16 @@
 % Please edit documentation in R/pdf_funs.R
 \name{print.pdf}
 \alias{print.pdf}
-\title{Print a pdf object}
+\title{Title}
 \usage{
 \method{print}{pdf}(x, pages = 1)
 }
 \arguments{
-\item{pdf}{pdf object}
+\item{pdf}{}
 }
 \value{
-pdf (invisibly)
-pdf(test_pdf_text())
+pdf_load(text = c("ABC\nDEF\nGHI", "abc\ndef\nghi"))
 }
 \description{
-Print a pdf object
+Title
 }

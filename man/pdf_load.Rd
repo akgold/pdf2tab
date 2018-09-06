@@ -2,24 +2,17 @@
 % Please edit documentation in R/pdf_funs.R
 \name{pdf_load}
 \alias{pdf_load}
-\title{Load PDF}
+\title{Title}
 \usage{
-pdf_load(filename = NULL, n_col = NULL, text = NULL, pages = NULL,
-  drop_from_top = 0, drop_from_bottom = 0, ...)
+pdf_load(filename = NULL, text = NULL, pages = NULL, drop_from_top = 0,
+  drop_from_bottom = 0, ...)
 }
 \arguments{
-\item{filename}{s}
-
-\item{text}{s}
-
-\item{...}{s}
-}
-\value{
-s
+\item{...}{}
 }
 \description{
-Load PDF
+Title
 }
 \examples{
-pdf_load(text = test_pdf_text())
+#pdf_load(text = c("ABC\\nDEF\\nGHI", "abc\\ndef\\nghi"))
 }
