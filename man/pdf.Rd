@@ -2,16 +2,18 @@
 % Please edit documentation in R/pdf_funs.R
 \name{pdf}
 \alias{pdf}
-\title{Title}
+\title{PDF Object}
 \usage{
 pdf(text, n_col = NULL)
 }
 \arguments{
-\item{n_col}{}
+\item{text}{pdf text}
+
+\item{n_col}{number of columns in pdf}
 }
 \value{
-pdf(list("ABC\nDEF\nGHI", "abc\ndef\nghi"))
+pdf(test_pdf_text())
 }
 \description{
-Title
+PDF Object
 }

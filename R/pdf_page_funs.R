@@ -14,8 +14,8 @@
 #'
 #' str(pdf2tab:::pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
 #'          " adsdsf           asd             asdfad")))
-pdf_page <- function(text, rows = NULL, cols = NULL) {
-  l <- list(text = text,
+pdf_page <- function(text, rows = NULL, cols = NULL, split_char = "\n") {
+  l <- list(text = stringr::str_split(text, split_char),
             cols = cols,
             rows = rows)
   class(l) <- "pdf_page"
@@ -136,7 +136,7 @@ set_page_attr <- function(x, which, val) {
 #'
 #' @return x (invisibly)
 #'
-#' pdf2tab:::pdf_page(list("a   b   c", "1   2   3"))
+#' pdf2tab:::pdf_page(c("a   b   c", "1   2   3"))
 #' pdf2tab:::pdf_page(list("ABCDEF", "123456"), cols = c(2, 4))
 #' pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"), rows = 3)
 #' pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"),
@@ -147,7 +147,7 @@ print.pdf_page <- function(x, ...) {
   t <- add_print_cols(t, get_page_cols(x))
   t <- add_print_rows(t, get_page_rows(x), get_page_cols(x))
 
-  cat(paste0(t, collapse = "\n"))
+  cat(paste0(t[[1]], collapse = "\n"))
 
   invisible(x)
 }

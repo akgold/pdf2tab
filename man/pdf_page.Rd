@@ -4,7 +4,7 @@
 \alias{pdf_page}
 \title{Create a PDF Page}
 \usage{
-pdf_page(text, rows = NULL, cols = NULL)
+pdf_page(text, rows = NULL, cols = NULL, split_char = "\\n")
 }
 \arguments{
 \item{text}{Text of page}

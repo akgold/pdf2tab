@@ -14,7 +14,7 @@
 \value{
 x (invisibly)
 
-pdf2tab:::pdf_page(list("a   b   c", "1   2   3"))
+pdf2tab:::pdf_page(c("a   b   c", "1   2   3"))
 pdf2tab:::pdf_page(list("ABCDEF", "123456"), cols = c(2, 4))
 pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"), rows = 3)
 pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"),
