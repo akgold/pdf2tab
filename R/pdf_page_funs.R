@@ -4,6 +4,7 @@
 # Pdf Page Constructor, Getters, Setters   #
 ############################################
 
+
 pdf_page <- function(text,
                      rows = NULL, cols = NULL, split_char = "\n") {
   structure(list(text = stringr::str_split(text, split_char),
