@@ -1,57 +1,40 @@
 # Constructors and Functions for Dealing with Full pdfs
 
-
-#' Title
+#' Load PDF
 #'
-#' @param filename
-#' @param text
-#' @param ...
+#' @param filename s
+#' @param text s
+#' @param ... s
 #'
-#' @return
+#' @return s
 #' @export
 #'
 #' @examples
-#' #pdf_load(text = c("ABC\nDEF\nGHI", "abc\ndef\nghi"))
-pdf_load <- function(filename = NULL, text = NULL,
+#' pdf_load(text = test_pdf_text())
+pdf_load <- function(pdf_file, n_col = NULL,
                      pages = NULL,
                      drop_from_top = 0, drop_from_bottom = 0,
                      ...) {
-  if (all(!is.null(filename), !is.null(text))) {
-    stop("Only one of filename and text should be supplied.")
-  }
 
-  if (!is.null(filename)) text <- pdftools::pdf_text(filename, ...)
-
-  if (is.null(pages)) {
-    pages <- seq(length(text))
+  if (file.exists(pdf_file)) {
+    pdf_file <- pdftools::pdf_text(filename, ...)
+  } else {
+    warning("No file found, interpreting pdf_file input as actual text.")
   }
 
   # split text and newline, drop extra lines and keep only needed pages
-  p <- pdf(text)
-  p <- split_text(p)
-  p <- drop_lines(p, drop_from_top, drop_from_bottom)
+  p <- pdf(pdf_file, n_col)
   p <- keep_pages(p, pages)
-
-  pdf(text)
-}
-
-#' Title
-#'
-#' @param pdf
-#' @param by_char
-#'
-#' @return
-#'
-#' split_text(pdf(c("ABC\nDEF\nGHI", "abc\ndef\nghi")))
-split_text <- function(pdf, by_char = "\n") {
-  stopifnot(class(pdf) == "pdf")
-  # TODO: Doesn't
-  # stringr::str_split(get_pdf_text(pdf) %>% unlist(), by_char)
-  pdf
+  drop_lines(p, drop_from_top, drop_from_bottom)
 }
 
 set_pdf_text <- function(pdf, text) {
   pdf$text <- text
+  pdf
+}
+
+set_n_col <- function(pdf, n_col) {
+  pdf$n_col <- n_col
   pdf
 }
 
@@ -63,14 +46,14 @@ get_n_col <- function(pdf) {
   pdf$n_col
 }
 
-#' Title
+#' PDF Object
 #'
-#' @param text
-#' @param n_col
+#' @param text pdf text
+#' @param n_col number of columns in pdf
 #'
 #' @return
 #'
-#' pdf(list("ABC\nDEF\nGHI", "abc\ndef\nghi"))
+#' pdf(test_pdf_text())
 pdf <- function(text, n_col = NULL) {
   p <- list(pages = lapply(text, pdf_page),
             n_col = NULL)
@@ -78,36 +61,38 @@ pdf <- function(text, n_col = NULL) {
   p
 }
 
-#' Title
+#' Print a pdf object
 #'
-#' @param pdf
+#' @param pdf pdf object
 #'
-#' @return
-#'
-#' pdf_load(text = c("ABC\nDEF\nGHI", "abc\ndef\nghi"))
+#' @return pdf (invisibly)
+#' pdf(test_pdf_text())
 print.pdf <- function(x, pages = 1) {
   cat(sprintf("\n\nPDF of %s pages.\n\n", get_n_pages(x)))
 
-  for (i in get_pages(x)) {
-    cat(sprintf("\nPAGE %s\n\n", i))
+  for (i in seq(get_n_pages(x))) {
+    cat("\n---------------------------------------\n",
+        sprintf("PAGE %s", i),
+        "\n---------------------------------------\n")
     print(get_pages(x, i)[[1]])
   }
 
+  invisible(pdf)
 }
 
 
 
-#' Title
+#' Get Pages from PDF Object
 #'
-#' @param x
-#' @param i
+#' @param x pdf object
+#' @param i which pages to get
 #'
 #' @return
 #'
-#' x <- pdf(list("ABC", "DEF"))
-#' get_pages(x)
-#' get_pages(x, 1)
-get_pages <- function(x, i = NULL) {
+#' x <- pdf(test_pdf_text())
+#' get_pdf_pages(x)
+#' get_pdf_pages(x, 1:2)
+get_pdf_pages <- function(x, i = NULL) {
   p <- get_all_pages(x)
 
   if (is.null(i)) return(p)
@@ -123,21 +108,24 @@ get_n_pages <- function(x) {
   length(x$pages)
 }
 
-#' Title
+
+#' Sample PDF Text for Testing
 #'
-#' @param pdf
-#' @param drop_from_top
-#' @param drop_from_bottom
-#'
-#' @return
+#' @return list of characters
 #' @export
 #'
 #' @examples
-drop_lines <- function(pdf, drop_from_top, drop_from_bottom) {
-  purrr::map(pdf, function(page) page[-c(drop_from_top,
-                                         seq(length(page) - drop_from_bottom,
-                                             length(page)))])
+#' test_pdf_text()
+test_pdf_text <- function(which = "sentencing") {
+  `[`(load_test_pdf(which),
+      switch(which,
+             sentencing = 7:8))
 }
 
-
-
+load_test_pdf <- function(which = "sentencing") {
+  file <- here::here("inst", "extdata",
+                     switch(which,
+                            sentencing =
+                              "USSC_Public_Release_Codebook_FY99_FY16.pdf"))
+  pdftools::pdf_text(file)
+}
