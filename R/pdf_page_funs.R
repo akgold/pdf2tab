@@ -15,111 +15,42 @@
 #' str(pdf2tab:::pdf_page(list("HEADER 1         HEADER 2         HEADER 3",
 #'          " adsdsf           asd             asdfad")))
 pdf_page <- function(text, rows = NULL, cols = NULL, split_char = "\n") {
-  l <- list(text = stringr::str_split(text, split_char),
-            cols = cols,
-            rows = rows)
-  class(l) <- "pdf_page"
-  l
+  structure(list(text = stringr::str_split(text, split_char),
+                 cols = cols,
+                 rows = rows),
+            class = "pdf_page")
 }
 
-#' Get Text from Page
-#'
-#' @inheritParams get_page_attr
-#'
-#' @return character, text of x
-#'
-#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
-#' pdf2tab:::get_page_text(p)
-get_page_text <- function(x) {
-  get_page_attr(x, "text")
+get_text.pdf_page <- function(x) {
+  get_attr(x, "text")
 }
 
-#' Get PDF Page Columns
-#'
-#' @inheritParams get_page_attr
-#'
-#' @return numeric, columns of x
-#'
-#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
-#' pdf2tab:::get_page_cols(p)
-get_page_cols <- function(x) {
-  get_page_attr(x, "cols")
+get_cols.pdf_page <- function(x) {
+  get_attr(x, "cols")
 }
 
-#' Get PDF Page Rows
-#'
-#' @inheritParams get_page_attr
-#'
-#' @return numeric, rows of x
-#'
-#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
-#' pdf2tab:::get_page_rows(p)
-get_page_rows <- function(x) {
-  get_page_attr(x, "rows")
+get_rows.pdf_page <- function(x) {
+  get_attr(x, "rows")
 }
 
-#' Set Text for Page
-#'
-#' @inheritParams set_page_attr
-#'
-#' @return pdf_page
-#'
-#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
-#' pdf2tab:::set_page_text(p, "DEF")
-set_page_cols <- function(x, val) {
-  set_page_attr(x, "cols", val)
+set_cols.pdf_page <- function(x, val) {
+  set_attr(x, "cols", val)
 }
 
-#' Set Rows for Page
-#'
-#' @inheritParams set_page_attr
-#'
-#' @return pdf_page
-#'
-#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
-#' pdf2tab:::set_page_rows(p, 3)
-set_page_rows <- function(x, val) {
-  set_page_attr(x, "rows", val)
+set_rows.pdf_page <- function(x, val) {
+  set_attr(x, "rows", val)
 }
 
-#' Set Text for Page
-#'
-#' @inheritParams set_page_attr
-#'
-#' @return pdf_page
-#'
-#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
-#' pdf2tab:::set_page_text(p, "DEF")
-set_page_text <- function(x, val) {
-  set_page_attr(x, "text", val)
+set_text.pdf_page <- function(x, val) {
+  set_attr(x, "text", val)
 }
 
-#' Get Attribute from Page
-#'
-#' @param x pdf_age
-#' @param which attribute
-#'
-#' @return attribute of x
-#'
-#' @examples
-#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
-#' pdf2tab:::get_page_attr(p, "text")
-get_page_attr <- function(x, which) {
+get_attr.pdf_page <- function(x, which) {
   stopifnot(which %in% names(x))
   x[[which]]
 }
 
-#' Set Attribute for Page
-#'
-#' @param x pdf_age
-#' @param which attribute
-#' @param val value
-#'
-#' @return attribute of x
-#'
-#' p <- pdf2tab:::pdf_page("ABC", 1, 2)
-#' pdf2tab:::set_page_attr(p, "text", "DEF")
-set_page_attr <- function(x, which, val) {
+set_attr.pdf_page <- function(x, which, val) {
   stopifnot(which %in% names(x))
   x[[which]] <- val
   x
@@ -169,9 +100,9 @@ add_print_cols <- function(x, cols) {
   if (is.null(cols)) return(x)
 
   as.list(c(purrr::map_chr(x, add_chars, cols = cols),
-    add_chars(paste0(rep(" ", max(cols + 1)), collapse = ""),
-              cols = cols,
-              chars = seq(length(cols)))))
+            add_chars(paste0(rep(" ", max(cols + 1)), collapse = ""),
+                      cols = cols,
+                      chars = seq(length(cols)))))
 }
 
 #' Add Rows to Text
@@ -246,4 +177,10 @@ add_chars <- function(line, cols, chars = "|") {
 
   # zip together
   paste0(purrr::map2_chr(line, i, paste0), collapse = "")
+}
+
+drop_lines.pdf_page <- function(page, lines, from) {
+  text <- get_text(page)
+  if (from == "bottom") lines <- seq(length(text) - lines + 1, length(text))
+  set_text(page, text[-lines])
 }
