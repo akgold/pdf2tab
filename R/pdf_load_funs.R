@@ -10,62 +10,123 @@
 #' @export
 #'
 #' @examples
-#' pdf_load(text = test_pdf_text())
-pdf_load <- function(pdf_file, n_col = NULL,
+#' pdf_load(test_pdf_text())
+pdf_load <- function(pdf_file, cols = NULL, rowss = NULL,
                      pages = NULL,
-                     drop_from_top = 0, drop_from_bottom = 0,
+                     drop_lines = c(0, 0),
                      ...) {
 
-  if (file.exists(pdf_file)) {
+  text <- load_file(pdf_file, ...)
+
+  # split text and newline
+  p <- pdf(pdf_file, cols, rowss)
+  p <- keep_pages(p, pages)
+  p <- drop_lines(p, drop_lines[1], "top")
+  drop_lines(p, drop_lines[2], "bottom")
+}
+
+
+
+drop_lines.pdf <- function(pdf, lines, from) {
+  stopifnot(from %in% c("top", "bottom"))
+
+  text <- get_text(pdf)
+  text <- lapply(text, drop_lines, lines = lines, from = from)
+  set_text(pdf, text)
+}
+
+keep_pages <- function(pdf, pages) {
+  if (!is.null(pages)) pdf <- select_pdf_pages(pdf, pages)
+
+  pdf
+}
+
+load_file <- function(pdf_file, ...) {
+  if (length(pdf_file) == 1 && file.exists(pdf_file)) {
     pdf_file <- pdftools::pdf_text(filename, ...)
   } else {
     warning("No file found, interpreting pdf_file input as actual text.")
   }
 
-  # split text and newline, drop extra lines and keep only needed pages
-  p <- pdf(pdf_file, n_col)
-  p <- keep_pages(p, pages)
-  drop_lines(p, drop_from_top, drop_from_bottom)
+  pdf_file
 }
 
-set_pdf_text <- function(pdf, text) {
-  pdf$text <- text
-  pdf
-}
+####################################################
+#   Constructors, Getters, Setters                 #
+####################################################
+pdf <- function(text,
+                cols = NULL, rows = NULL) {
+  cols <- check_arg_length(text, cols)
+  rows <- check_arg_length(text, rows)
 
-set_n_col <- function(pdf, n_col) {
-  pdf$n_col <- n_col
-  pdf
-}
-
-get_pdf_text <- function(pdf) {
-  lapply(pdf$pages, get_page_text)
-}
-
-get_n_col <- function(pdf) {
-  pdf$n_col
-}
-
-#' PDF Object
-#'
-#' @param text pdf text
-#' @param n_col number of columns in pdf
-#'
-#' @return
-#'
-#' pdf(test_pdf_text())
-pdf <- function(text, n_col = NULL) {
-  p <- list(pages = lapply(text, pdf_page),
-            n_col = NULL)
+  p <- list(text = lapply(text, pdf_page),
+            cols = cols,
+            rows = rows)
   class(p) <- "pdf"
   p
 }
+
+check_arg_length <- function(text, arg) {
+  if (is.null(arg)) return(arg)
+
+  stopifnot(length(arg) %in% c(1, length(text)))
+
+  if (length(arg) == 1) arg <- rep(arg, length(text))
+  arg
+}
+
+
+get_text.pdf <- function(pdf) {
+  get_attr(pdf, "text")
+}
+
+set_text.pdf <- function(pdf, text) {
+  set_attr(pdf, "text", text)
+}
+
+get_cols.pdf <- function(pdf) {
+  get_attr(pdf, "cols")
+}
+
+set_cols.pdf <- function(pdf, cols) {
+  set_attr(pdf, "cols", cols)
+}
+
+get_rows.pdf <- function(pdf) {
+  get_attr(pdf, "rows")
+}
+
+set_rows.pdf <- function(pdf, rows) {
+  set_attr(pdf, "rows", rows)
+}
+
+get_n_pages <- function(x) {
+  length(get_text(x))
+}
+
+get_attr.pdf <- function(x, which) {
+  stopifnot(which %in% names(x))
+
+  x[[which]]
+}
+
+set_attr.pdf <- function(x, which, val) {
+  stopifnot(which %in% names(x))
+
+  x[[which]] <- val
+  x
+}
+
+
+
 
 #' Print a pdf object
 #'
 #' @param pdf pdf object
 #'
 #' @return pdf (invisibly)
+#'
+#' @export
 #' pdf(test_pdf_text())
 print.pdf <- function(x, pages = 1) {
   cat(sprintf("\n\nPDF of %s pages.\n\n", get_n_pages(x)))
@@ -74,55 +135,19 @@ print.pdf <- function(x, pages = 1) {
     cat("\n---------------------------------------\n",
         sprintf("PAGE %s", i),
         "\n---------------------------------------\n")
-    print(get_pages(x, i)[[1]])
+    print(get_text(x))
   }
 
   invisible(pdf)
 }
 
-
-
-#' Get Pages from PDF Object
-#'
-#' @param x pdf object
-#' @param i which pages to get
-#'
-#' @return
-#'
-#' x <- pdf(test_pdf_text())
-#' get_pdf_pages(x)
-#' get_pdf_pages(x, 1:2)
-get_pdf_pages <- function(x, i = NULL) {
-  p <- get_all_pages(x)
-
-  if (is.null(i)) return(p)
-
-  p[i]
-}
-
-get_all_pages <- function(x) {
-  x$pages
-}
-
-get_n_pages <- function(x) {
-  length(x$pages)
-}
-
-
-#' Sample PDF Text for Testing
-#'
-#' @return list of characters
-#' @export
-#'
-#' @examples
-#' test_pdf_text()
 test_pdf_text <- function(which = "sentencing") {
-  `[`(load_test_pdf(which),
+  `[`(open_test_pdf(which),
       switch(which,
              sentencing = 7:8))
 }
 
-load_test_pdf <- function(which = "sentencing") {
+open_test_pdf <- function(which = "sentencing") {
   file <- here::here("inst", "extdata",
                      switch(which,
                             sentencing =
