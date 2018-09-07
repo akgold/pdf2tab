@@ -2,38 +2,57 @@
 
 #' Load PDF
 #'
-#' @param filename s
-#' @param text s
-#' @param ... s
+#' @param ... optional arguments passed to pdftools::pdf_text
+#' @param pdf_file a filename of a pdf or a list of characters
 #'
-#' @return s
+#' @return a pdf object
 #' @export
 #'
 #' @examples
 #' p <- pdf_load(test_pdf_text())
-#' p <- pdf_load(test_pdf_text(), drop_lines = c(1, 2))
-#' p <- pdf_load(test_pdf_text(pages = "all"), pages = seq(7, 45))
-pdf_load <- function(pdf_file, cols = NULL, rows = NULL,
-                     pages = NULL, drop_lines = c(NULL, NULL),
+pdf_load <- function(pdf_file,
                      ...) {
 
-  text <- load_file(pdf_file, ...)
+  pdf_file <- load_file(pdf_file, ...)
 
   # split text and newline
-  p <- pdf(pdf_file, cols, rows)
-  p <- keep_pages(p, pages)
-  p <- drop_lines(p, drop_lines[1], "top")
-  drop_lines(p, drop_lines[2], "bottom")
+ pdf(pdf_file)
 }
 
-drop_lines.pdf <- function(pdf, lines, from) {
+#' Drop lines from pdf
+#' @export
+#' @rdname drop_lines
+drop_lines.pdf <- function(x, lines, from) {
   stopifnot(from %in% c("top", "bottom"))
 
-  text <- get_text(pdf)
-  text <- lapply(text, drop_lines, lines = lines, from = from)
-  set_text(pdf, text)
+  text <- get_text(x)
+  lines <- fmt_lines(text, lines)
+  text <- purrr::map2(text, lines, function(p, l) drop_lines(p, l, from))
+  set_text(x, text)
 }
 
+fmt_lines <- function(text, lines) {
+  stopifnot(length(lines) %in% c(1, length(text)))
+
+  if (length(lines) == 1) lines <- rep(lines, length(text))
+
+  purrr::map2(text, lines,
+              function(p, l) stopifnot(all(l %in% seq(length(get_text(p))))))
+
+  lines
+}
+
+#' Keep only needed pages
+#'
+#' @param pdf pdf object
+#' @param pages pages to keep
+#'
+#' @return pdf with only pages specified by pages
+#' @export
+#'
+#' @examples
+#' p <- pdf_load(test_pdf_text(pages = "all"))
+#' p <- keep_pages(p, seq(7, 56))
 keep_pages <- function(pdf, pages) {
   if (is.null(pages)) return(pdf)
 
@@ -44,7 +63,7 @@ keep_pages <- function(pdf, pages) {
 
 load_file <- function(pdf_file, ...) {
   if (length(pdf_file) == 1 && file.exists(pdf_file)) {
-    pdf_file <- pdftools::pdf_text(filename, ...)
+    pdf_file <- pdftools::pdf_text(pdf_file, ...)
   } else {
     warning("No file found, interpreting pdf_file input as actual text.")
   }
@@ -153,5 +172,5 @@ open_test_pdf <- function(which = "sentencing") {
                  sentencing = "USSC_Public_Release_Codebook_FY99_FY16.pdf")
   file <- system.file("extdata", file, package = "pdf2tab", mustWork = TRUE)
 
-  pdftools::pdf_text(file)
+  load_file(file)
 }

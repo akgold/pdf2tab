@@ -112,10 +112,12 @@ add_chars <- function(line, cols, chars = "|") {
   paste0(purrr::map2_chr(line, i, paste0), collapse = "")
 }
 
-drop_lines.pdf_page <- function(page, lines, from) {
-  if (is.null(lines)) return(page)
+#' @export
+#' @rdname drop_lines
+drop_lines.pdf_page <- function(x, lines, from) {
+  if (is.null(lines)) return(x)
 
-  text <- get_text(page)
+  text <- get_text(x)
   if (from == "bottom") lines <- seq(length(text) - lines + 1, length(text))
-  set_text(page, text[-lines])
+  set_text(x, text[-lines])
 }

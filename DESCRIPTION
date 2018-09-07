@@ -16,4 +16,6 @@ Suggests: knitr,
 VignetteBuilder: knitr
 Imports:
     purrr,
-    stringr
+    stringr,
+    pdftools,
+    dplyr

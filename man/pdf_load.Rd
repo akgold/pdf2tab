@@ -4,24 +4,19 @@
 \alias{pdf_load}
 \title{Load PDF}
 \usage{
-pdf_load(pdf_file, cols = NULL, rows = NULL, pages = NULL,
-  drop_lines = c(NULL, NULL), ...)
+pdf_load(pdf_file, ...)
 }
 \arguments{
-\item{...}{s}
+\item{pdf_file}{a filename of a pdf or a list of characters}
 
-\item{filename}{s}
-
-\item{text}{s}
+\item{...}{optional arguments passed to pdftools::pdf_text}
 }
 \value{
-s
+a pdf object
 }
 \description{
 Load PDF
 }
 \examples{
 p <- pdf_load(test_pdf_text())
-p <- pdf_load(test_pdf_text(), drop_lines = c(1, 2))
-p <- pdf_load(test_pdf_text(pages = "all"), pages = seq(7, 45))
 }

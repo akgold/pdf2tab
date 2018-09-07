@@ -10,4 +10,17 @@ set_rows <- function(x, rows) UseMethod("set_rows")
 get_attr <- function(x, which) UseMethod("get_attr")
 set_attr <- function(x, which, val) UseMethod("set_attr")
 
+#' Drop lines from top and bottom of pages
+#'
+#' @param x a pdf object
+#' @param lines lines to drop, either a number, or a vector of same length as number of pages in pdf
+#' @param from either "top" or "bottom"
+#'
+#' @return pdf with lines dropped from each page
+#' @export
+#'
+#' @examples
+#' p <- pdf_load(test_pdf_text())
+#' p <- drop_lines(p, 1, "top")
+#' p <- drop_lines(p, 2, "bottom")
 drop_lines <- function(x, lines, from) UseMethod("drop_lines")
