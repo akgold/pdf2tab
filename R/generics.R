@@ -12,7 +12,7 @@ set_attr <- function(x, which, val) UseMethod("set_attr")
 
 #' Drop lines from top and bottom of pages
 #'
-#' @param x a pdf object
+#' @param x an object of class pdf
 #' @param lines lines to drop, either a number, or a vector of same length as number of pages in pdf
 #' @param from either "top" or "bottom"
 #'

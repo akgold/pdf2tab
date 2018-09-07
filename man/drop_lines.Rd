@@ -14,7 +14,7 @@ drop_lines(x, lines, from)
 \method{drop_lines}{pdf_page}(x, lines, from)
 }
 \arguments{
-\item{x}{a pdf object}
+\item{x}{an object of class pdf}
 
 \item{lines}{lines to drop, either a number, or a vector of same length as number of pages in pdf}
 

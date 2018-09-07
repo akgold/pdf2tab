@@ -5,7 +5,8 @@
 ############################################
 pdf_page <- function(text,
                      rows = NULL, cols = NULL, split_char = "\n") {
-  structure(list(text = stringr::str_split(text, split_char)[[1]],
+  structure(list(text = rectangularize(stringr::str_split(text,
+                                                          split_char)[[1]]),
                  cols = cols,
                  rows = rows),
             class = "pdf_page")
@@ -44,6 +45,10 @@ set_attr.pdf_page <- function(x, which, val) {
   stopifnot(which %in% names(x))
   x[[which]] <- val
   x
+}
+
+rectangularize <- function(x) {
+  stringr::str_pad(x, max(nchar(x)), side = "right")
 }
 
 ###################################################
@@ -101,15 +106,15 @@ add_rows_recur <- function(x, rows, new_row) {
 
 add_chars <- function(line, cols, chars = "|") {
   stopifnot(typeof(line) == "character" & length(line) == 1)
+  stopifnot(max(cols) <= nchar(line))
   stopifnot(length(chars) %in% c(1, length(cols)))
 
   # split line and create col line to merge with
   line <- strsplit(line, "")[[1]]
-  i <- rep("", length(line))
-  i[cols] <- chars
+  line[cols] <- chars
 
   # zip together
-  paste0(purrr::map2_chr(line, i, paste0), collapse = "")
+  paste0(line, collapse = "")
 }
 
 #' @export
