@@ -4,8 +4,8 @@
 \alias{pdf_load}
 \title{Load PDF}
 \usage{
-pdf_load(pdf_file, cols = NULL, rowss = NULL, pages = NULL,
-  drop_lines = c(0, 0), ...)
+pdf_load(pdf_file, cols = NULL, rows = NULL, pages = NULL,
+  drop_lines = c(NULL, NULL), ...)
 }
 \arguments{
 \item{...}{s}
@@ -21,5 +21,7 @@ s
 Load PDF
 }
 \examples{
-pdf_load(test_pdf_text())
+p <- pdf_load(test_pdf_text())
+p <- pdf_load(test_pdf_text(), drop_lines = c(1, 2))
+p <- pdf_load(test_pdf_text(pages = "all"), pages = seq(7, 45))
 }

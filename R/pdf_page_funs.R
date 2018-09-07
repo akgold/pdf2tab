@@ -3,11 +3,9 @@
 ############################################
 # Pdf Page Constructor, Getters, Setters   #
 ############################################
-
-
 pdf_page <- function(text,
                      rows = NULL, cols = NULL, split_char = "\n") {
-  structure(list(text = stringr::str_split(text, split_char),
+  structure(list(text = stringr::str_split(text, split_char)[[1]],
                  cols = cols,
                  rows = rows),
             class = "pdf_page")
@@ -51,31 +49,21 @@ set_attr.pdf_page <- function(x, which, val) {
 ###################################################
 #      Printing Funs                              #
 ###################################################
-
-#' Print a PDF page
-#'
-#' @param x pdf_page
-#' @param ... nothing right now
-#'
-#' @return x (invisibly)
-#'
-#' @export
-#'
-#' @examples
-#' pdf2tab:::pdf_page(c("a   b   c", "1   2   3"))
-#' pdf2tab:::pdf_page(list("ABCDEF", "123456"), cols = c(2, 4))
-#' pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"), rows = 3)
-#' pdf2tab:::pdf_page(list("ABCDEF", "ABCDEF", "ABCDEF", "123456"),
-#' cols = c(2, 4), rows = c(3, 4))
 print.pdf_page <- function(x, ...) {
-
   t <- get_text(x)
   t <- add_print_cols(t, get_cols(x))
   t <- add_print_rows(t, get_rows(x), get_cols(x))
 
-  cat(paste0(t, collapse = "\n"))
+  row_ns <- get_row_ns(t)
+
+  cat(paste(row_ns, t, sep = "| ", collapse = "\n"))
 
   invisible(x)
+}
+
+get_row_ns <- function(t) {
+  ns <- seq(length(t))
+  stringr::str_pad(ns, max(nchar(ns)), "left")
 }
 
 add_print_cols <- function(x, cols) {
@@ -125,6 +113,8 @@ add_chars <- function(line, cols, chars = "|") {
 }
 
 drop_lines.pdf_page <- function(page, lines, from) {
+  if (is.null(lines)) return(page)
+
   text <- get_text(page)
   if (from == "bottom") lines <- seq(length(text) - lines + 1, length(text))
   set_text(page, text[-lines])

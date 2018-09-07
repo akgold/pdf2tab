@@ -10,22 +10,21 @@
 #' @export
 #'
 #' @examples
-#' pdf_load(test_pdf_text())
-pdf_load <- function(pdf_file, cols = NULL, rowss = NULL,
-                     pages = NULL,
-                     drop_lines = c(0, 0),
+#' p <- pdf_load(test_pdf_text())
+#' p <- pdf_load(test_pdf_text(), drop_lines = c(1, 2))
+#' p <- pdf_load(test_pdf_text(pages = "all"), pages = seq(7, 45))
+pdf_load <- function(pdf_file, cols = NULL, rows = NULL,
+                     pages = NULL, drop_lines = c(NULL, NULL),
                      ...) {
 
   text <- load_file(pdf_file, ...)
 
   # split text and newline
-  p <- pdf(pdf_file, cols, rowss)
+  p <- pdf(pdf_file, cols, rows)
   p <- keep_pages(p, pages)
   p <- drop_lines(p, drop_lines[1], "top")
   drop_lines(p, drop_lines[2], "bottom")
 }
-
-
 
 drop_lines.pdf <- function(pdf, lines, from) {
   stopifnot(from %in% c("top", "bottom"))
@@ -36,9 +35,11 @@ drop_lines.pdf <- function(pdf, lines, from) {
 }
 
 keep_pages <- function(pdf, pages) {
-  if (!is.null(pages)) pdf <- select_pdf_pages(pdf, pages)
+  if (is.null(pages)) return(pdf)
 
-  pdf
+  text <- get_text(pdf)
+  stopifnot(all(pages %in% seq(length(text))))
+  set_text(pdf, text[pages])
 }
 
 load_file <- function(pdf_file, ...) {
@@ -56,17 +57,13 @@ load_file <- function(pdf_file, ...) {
 ####################################################
 pdf <- function(text,
                 cols = NULL, rows = NULL) {
-  cols <- check_arg_length(text, cols)
-  rows <- check_arg_length(text, rows)
-
-  p <- list(text = lapply(text, pdf_page),
-            cols = cols,
-            rows = rows)
-  class(p) <- "pdf"
-  p
+  structure(list(text = lapply(text, pdf_page),
+                 cols = check_arg(text, cols),
+                 rows = check_arg(text, rows)),
+            class = "pdf")
 }
 
-check_arg_length <- function(text, arg) {
+check_arg <- function(text, arg) {
   if (is.null(arg)) return(arg)
 
   stopifnot(length(arg) %in% c(1, length(text)))
@@ -117,40 +114,44 @@ set_attr.pdf <- function(x, which, val) {
   x
 }
 
-
-
-
-#' Print a pdf object
-#'
-#' @param pdf pdf object
-#'
-#' @return pdf (invisibly)
-#'
-#' @export
-#' pdf(test_pdf_text())
 print.pdf <- function(x, pages = 1) {
   cat(sprintf("\n\nPDF of %s pages.\n\n", get_n_pages(x)))
 
-  for (i in seq(get_n_pages(x))) {
-    cat("\n---------------------------------------\n",
-        sprintf("PAGE %s", i),
-        "\n---------------------------------------\n")
-    print(get_text(x))
+  for (i in seq(pages)) {
+    cat("\n   ---------------------------------------------------\n",
+        sprintf("       PAGE %s", i),
+        "\n   ---------------------------------------------------\n")
+    print(get_text(x)[[i]])
   }
 
   invisible(pdf)
 }
 
-test_pdf_text <- function(which = "sentencing") {
-  `[`(open_test_pdf(which),
-      switch(which,
-             sentencing = 7:8))
+#' Load the text of a pdf for testing
+#'
+#' @param which which pdf, currently just supports default
+#' @param pages which pages, table starts on page 7
+#'
+#' @return list, each element 1 page
+#' @export
+#'
+#' @examples
+#' test_pdf_text()
+test_pdf_text <- function(which = "sentencing", pages = NULL) {
+  p <- open_test_pdf(which)
+
+  if (is.null(pages)) pages <- switch(which,
+                                      "sentencing" = 7)
+
+  if (pages == "all") pages <- seq(length(p))
+
+  p[pages]
 }
 
 open_test_pdf <- function(which = "sentencing") {
-  file <- here::here("inst", "extdata",
-                     switch(which,
-                            sentencing =
-                              "USSC_Public_Release_Codebook_FY99_FY16.pdf"))
+  file <- switch(which,
+                 sentencing = "USSC_Public_Release_Codebook_FY99_FY16.pdf")
+  file <- system.file("extdata", file, package = "pdf2tab", mustWork = TRUE)
+
   pdftools::pdf_text(file)
 }
