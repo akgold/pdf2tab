@@ -4,7 +4,7 @@
 \alias{pdf_load}
 \title{Load PDF}
 \usage{
-pdf_load(pdf_file, ...)
+pdf_load(pdf_file)
 }
 \arguments{
 \item{pdf_file}{a filename of a pdf or a list of characters}
@@ -18,5 +18,5 @@ a pdf object
 Load PDF
 }
 \examples{
-p <- pdf_load(test_pdf_text())
+p <- pdf_load()
 }

@@ -9,14 +9,9 @@
 #' @export
 #'
 #' @examples
-#' p <- pdf_load(test_pdf_text())
-pdf_load <- function(pdf_file,
-                     ...) {
-
-  pdf_file <- load_file(pdf_file, ...)
-
-  # split text and newline
- pdf(pdf_file)
+#' p <- pdf_load()
+pdf_load <- function(pdf_file) {
+ pdf_construct(pdf_file)
 }
 
 #' Drop lines from pdf
@@ -61,20 +56,10 @@ keep_pages <- function(pdf, pages) {
   set_text(pdf, text[pages])
 }
 
-load_file <- function(pdf_file, ...) {
-  if (length(pdf_file) == 1 && file.exists(pdf_file)) {
-    pdf_file <- pdftools::pdf_text(pdf_file, ...)
-  } else {
-    warning("No file found, interpreting pdf_file input as actual text.")
-  }
-
-  pdf_file
-}
-
 ####################################################
 #   Constructors, Getters, Setters                 #
 ####################################################
-pdf <- function(text,
+pdf_construct <- function(text,
                 cols = NULL, rows = NULL) {
   structure(list(text = lapply(text, pdf_page),
                  cols = check_arg(text, cols),
@@ -92,28 +77,29 @@ check_arg <- function(text, arg) {
 }
 
 
-get_text.pdf <- function(pdf) {
-  get_attr(pdf, "text")
+get_text.pdf <- function(x) {
+  x$text
 }
 
-set_text.pdf <- function(pdf, text) {
-  set_attr(pdf, "text", text)
+set_text.pdf <- function(x, text) {
+  x$text <- text
+  x
 }
 
-get_cols.pdf <- function(pdf) {
-  get_attr(pdf, "cols")
+get_cols.pdf <- function(x) {
+  get_attr(x, "cols")
 }
 
-set_cols.pdf <- function(pdf, cols) {
-  set_attr(pdf, "cols", cols)
+set_cols.pdf <- function(x, cols) {
+  set_attr(x, "cols", cols)
 }
 
-get_rows.pdf <- function(pdf) {
-  get_attr(pdf, "rows")
+get_rows.pdf <- function(x) {
+  get_attr(x, "rows")
 }
 
-set_rows.pdf <- function(pdf, rows) {
-  set_attr(pdf, "rows", rows)
+set_rows.pdf <- function(x, rows) {
+  set_attr(x, "rows", rows)
 }
 
 get_n_pages <- function(x) {
@@ -123,14 +109,24 @@ get_n_pages <- function(x) {
 get_attr.pdf <- function(x, which) {
   stopifnot(which %in% names(x))
 
-  x[[which]]
+  lapply(get_text(x), get_attr, which = which)
 }
 
 set_attr.pdf <- function(x, which, val) {
   stopifnot(which %in% names(x))
+  text <- get_text(x)
+  stopifnot(length(val) == length(text))
 
-  x[[which]] <- val
-  x
+  text <- purrr::map2(text, val, set_attr, which = which)
+  set_text(x, text)
+}
+
+has_header.pdf <- function(x) {
+  lapply(x, has_header)
+}
+
+set_header.pdf <- function(x, val) {
+  lapply(x, set_header, val = val)
 }
 
 print.pdf <- function(x, pages = 1) {
@@ -146,31 +142,9 @@ print.pdf <- function(x, pages = 1) {
   invisible(pdf)
 }
 
-#' Load the text of a pdf for testing
-#'
-#' @param which which pdf, currently just supports default
-#' @param pages which pages, table starts on page 7
-#'
-#' @return list, each element 1 page
-#' @export
-#'
-#' @examples
-#' test_pdf_text()
-test_pdf_text <- function(which = "sentencing", pages = NULL) {
-  p <- open_test_pdf(which)
-
-  if (is.null(pages)) pages <- switch(which,
-                                      "sentencing" = 7)
-
-  if (pages == "all") pages <- seq(length(p))
-
-  p[pages]
-}
-
-open_test_pdf <- function(which = "sentencing") {
-  file <- switch(which,
-                 sentencing = "USSC_Public_Release_Codebook_FY99_FY16.pdf")
-  file <- system.file("extdata", file, package = "pdf2tab", mustWork = TRUE)
-
-  load_file(file)
+################################################
+#         Data Framers                         #
+################################################
+as.data.frame.pdf <- function(x, row.names = NULL, optional = FALSE, ...){
+  dplyr::bind_rows(lapply(get_text(x), as.data.frame, ...))
 }

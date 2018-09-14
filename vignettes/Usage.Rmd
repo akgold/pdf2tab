@@ -19,16 +19,30 @@ knitr::opts_chunk$set(
 ```{r}
 library(pdf2tab)
 library(dplyr)
- p <-  test_pdf_text(pages = "all") %>%
+```
+
+```{r}
+ p <-  sentencing_pdf %>%
   pdf_load() %>%
   keep_pages(7) %>%
   drop_lines(1, "top") %>%
   drop_lines(2, "bottom")
 p
-# 
-# set_rows(p$text[[1]], c(1, 14, 21, 39, 44))
-# set_cols(p$text[[1]], c(15, 22, 28)) 
 ```
+
+For a single-page table, it can be easy to select the columns and rows 
+interactively.
+```{r}
+p_c <- p %>%
+  set_rows(list(c(15, 22, 40, 45))) %>%
+  set_cols(list(c(15, 23, 29, 66))) 
+p_c
+
+df <- p_c %>%
+  as.data.frame(header = TRUE)
+df
+```
+
 
 Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
 

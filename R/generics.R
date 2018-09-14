@@ -9,6 +9,8 @@ get_rows <- function(x) UseMethod("get_rows")
 set_rows <- function(x, rows) UseMethod("set_rows")
 get_attr <- function(x, which) UseMethod("get_attr")
 set_attr <- function(x, which, val) UseMethod("set_attr")
+has_header <- function(x) UseMethod("has_header")
+set_header <- function(x, val) UseMethod("set_header")
 
 #' Drop lines from top and bottom of pages
 #'
