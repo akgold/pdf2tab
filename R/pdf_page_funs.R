@@ -28,11 +28,29 @@ get_rows.pdf_page <- function(x) {
   r
 }
 
+#' Set Cols of PDF Page
+#'
+#' @param x page of pdf
+#' @param val cols, numeric
+#'
+#' @return x with cols set
+#' @export
+#'
+#' @examples
 set_cols.pdf_page <- function(x, val) {
   stopifnot(is.numeric(val))
   set_attr(x, "cols", val)
 }
 
+#' Set Rows of PDF Page
+#'
+#' @param x page of pdf
+#' @param val rows, numeric
+#'
+#' @return x with rows set
+#' @export
+#'
+#' @examples
 set_rows.pdf_page <- function(x, val) {
   stopifnot(is.numeric(val))
   set_attr(x, "rows", val)

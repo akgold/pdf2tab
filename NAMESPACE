@@ -2,6 +2,8 @@
 
 S3method(drop_lines,pdf)
 S3method(drop_lines,pdf_page)
+S3method(set_cols,pdf_page)
+S3method(set_rows,pdf_page)
 export(drop_lines)
 export(keep_pages)
 export(pdf_load)

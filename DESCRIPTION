@@ -17,5 +17,4 @@ VignetteBuilder: knitr
 Imports:
     purrr,
     stringr,
-    pdftools,
     dplyr
