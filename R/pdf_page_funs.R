@@ -92,7 +92,7 @@ print.pdf_page <- function(x, ...) {
   x <- add_print_cols(x)
   x <- add_print_rows(x)
 
-  print(get_text(x))
+  print(stringr::str_replace_all(get_text(x), " ", "_"))
 
   invisible(x)
 }
@@ -113,9 +113,13 @@ add_print_cols <- function(x) {
 add_print_rows <- function(x) {
   if (is.null(get_rows(x))) return(x)
 
+  # Make a blank vector
   p <- rep("", length(get_text(x)))
+  # Make row seps
   p[get_rows(x) - 1] <- make_row_chars(x)
+  # zip together
   t <- purrr::map2(get_text(x), p, function(x, y) c(x, y))
+  # drop blanks
   t <- purrr::discard(unlist(t), function(x) x == "")
   set_text(x, t)
 }
@@ -145,8 +149,8 @@ as.data.frame.pdf_page <- function(x, row.names = NULL, optional = FALSE, ...) {
   df <- dplyr::as_tibble(m)
 
   if(has_header(x)) {
-   names(df) <- df[1,]
-   df <- df[-1,]
+    names(df) <- df[1,]
+    df <- df[-1,]
   }
 
   df
@@ -167,5 +171,33 @@ join_rows <- function(page, rows) {
 join_row <- function(clump) {
   x <- matrix(unlist(clump), nrow = length(clump), byrow = TRUE)
   x <- apply(x, 2, function(y) paste0(y, collapse = ""))
-  stringr::str_squish(x)
+  stringr::str_trim(x)
+}
+
+guess.pdf_page <- function(x, search, n, margin, ...){
+  l <- apply_search(x, search, margin)
+  # TODO: add header option
+  if (margin == 1) l[1:2] <- 0
+  brks <- which(dplyr::row_number(-l) < n)
+
+  print(brks)
+  if (margin == 1) {
+    # TODO: WHy 3?
+    x <- set_rows(x, c(3, brks))
+  } else {
+    x <- set_cols(x, brs)
+  }
+  x
+}
+
+apply_search <- function(pdf_page, search, margin) {
+  t <- stringr::str_split(get_text(pdf_page), "")
+  t <- matrix(unlist(t), ncol = nchar(get_text(pdf_page)[1]), byrow = TRUE)
+
+  if (margin == 2) t <- t(t)
+
+  purrr::map_dbl(seq(nrow(t)),
+                 function(i) search(x = t[i, ],
+                                    lag = t[i-1, ],
+                                    lead = t[i+1, ]))
 }

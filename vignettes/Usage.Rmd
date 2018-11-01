@@ -17,12 +17,12 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-library(pdf2tab)
+# library(pdf2tab)
 library(dplyr)
 ```
 
 ```{r}
- p <-  sentencing_pdf %>%
+ p <- sentencing_pdf %>%
   pdf_load() %>%
   keep_pages(7) %>%
   drop_lines(1, "top") %>%
@@ -42,6 +42,28 @@ df <- p_c %>%
   as.data.frame(header = TRUE)
 df
 ```
+
+You can also provide custom functions for selecting rows and columns. All functions should output a numeric (or logical that can be summed). These functions must take 2 arguments, `x` and `i`. Thinking of `i` as the row (column) number, enabling use of indices like `i-1` and `i+1`.
+
+The function will return the rows (columns) for which the function is maximized. `x[i]` should be thought of as the whole row.
+```{r}
+col_search <- function(x) {
+  x$x != " " + x$lag == " " + x$lead != " "
+}
+
+row_search <- function(x, lag, lead) {
+   sum(x != " ") - sum(lag != " ")
+}
+
+p_c <- p %>%
+  # guess_cols(col_search, 5) %>%
+  guess_rows(row_search, 5, header = TRUE)
+p_c
+
+df <- p_c %>%
+  as.data.frame()
+```
+
 
 
 Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:

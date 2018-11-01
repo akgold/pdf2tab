@@ -148,3 +148,19 @@ print.pdf <- function(x, pages = 1) {
 as.data.frame.pdf <- function(x, row.names = NULL, optional = FALSE, ...){
   dplyr::bind_rows(lapply(get_text(x), as.data.frame, ...))
 }
+
+################################################
+#         Do Guessing                         #
+################################################
+guess_rows.pdf <- function(x, search, n_rows, ...) {
+  guess.pdf(x, search, n_rows, 1, ...)
+}
+
+guess_cols.pdf <- function(x, search, n_cols, ...) {
+  guess.pdf(x, search, n_cols, 2, ...)
+}
+
+guess.pdf <- function(x, search, n, margin, ...) {
+  t <- lapply(get_text(x), function(y) guess(y, search, n, margin, ...))
+  set_text(x, t)
+}

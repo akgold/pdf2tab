@@ -12,6 +12,11 @@ set_attr <- function(x, which, val) UseMethod("set_attr")
 has_header <- function(x) UseMethod("has_header")
 set_header <- function(x, val) UseMethod("set_header")
 
+# Guess Cols and Rows
+guess_cols <- function(x, search, n_cols, ...) UseMethod("guess_cols")
+guess_rows <- function(x, search, n_rows, ...) UseMethod("guess_rows")
+guess <- function(x, search, n, margin, ...) UseMethod("guess")
+
 #' Drop lines from top and bottom of pages
 #'
 #' @param x an object of class pdf
